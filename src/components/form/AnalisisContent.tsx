@@ -162,8 +162,24 @@ export function AnalisisContent() {
     locale: es,
   });
 
-  const handlePagar = () => {
-    router.push(`/multa/checkout?id=${multaId}`);
+  const handlePagar = async () => {
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ multaId }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error);
+      }
+
+      const { url } = await res.json();
+      window.location.href = url;
+    } catch (err) {
+      alert("Error al iniciar el pago. Inténtalo de nuevo.");
+    }
   };
 
   const handleDescarte = () => {
