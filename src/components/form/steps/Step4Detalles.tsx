@@ -110,6 +110,33 @@ export function Step4Detalles({ form }: Props) {
           <FormField label="Número del agente (si aparece en la notificación)">
             <Input {...register("numero_agente")} placeholder="Opcional" />
           </FormField>
+
+          <FormField
+            label="Artículo infringido (tal como aparece en la notificación)"
+            hint="Ej: 76.A LSV — cópialo exactamente de la notificación"
+            error={errors.articulo_infringido?.message}
+          >
+            <Input
+              {...register("articulo_infringido")}
+              placeholder="Ej: 76.A LSV"
+            />
+          </FormField>
+
+          <FormField
+            label="¿La notificación indica que ya se aplicó la tolerancia metrológica?"
+            hint='Busca el texto "APLICADA TOLERANCIA CONFORME A LA NORMATIVA DE CONTROL METROLÓGICO"'
+            error={errors.tolerancia_aplicada?.message}
+          >
+            <RadioGroup
+              name="tolerancia_aplicada"
+              value={boolField("tolerancia_aplicada")}
+              onChange={(v) => setBool("tolerancia_aplicada", v)}
+              options={[
+                { value: "no", label: "No aparece ese texto" },
+                { value: "si", label: "Sí, indica que ya aplicó tolerancia" },
+              ]}
+            />
+          </FormField>
         </>
       )}
 
@@ -198,6 +225,33 @@ export function Step4Detalles({ form }: Props) {
               ]}
             />
           </FormField>
+
+          <FormField
+            label="Artículo infringido (tal como aparece en la notificación)"
+            hint="Ej: 76.A LSV — cópialo exactamente de la notificación"
+            error={errors.articulo_infringido?.message}
+          >
+            <Input
+              {...register("articulo_infringido")}
+              placeholder="Ej: 76.A LSV"
+            />
+          </FormField>
+
+          <FormField
+            label="¿La notificación indica que ya se aplicó la tolerancia metrológica?"
+            hint='Busca el texto "APLICADA TOLERANCIA CONFORME A LA NORMATIVA DE CONTROL METROLÓGICO"'
+            error={errors.tolerancia_aplicada?.message}
+          >
+            <RadioGroup
+              name="tolerancia_aplicada"
+              value={boolField("tolerancia_aplicada")}
+              onChange={(v) => setBool("tolerancia_aplicada", v)}
+              options={[
+                { value: "no", label: "No aparece ese texto" },
+                { value: "si", label: "Sí, indica que ya aplicó tolerancia" },
+              ]}
+            />
+          </FormField>
         </>
       )}
 
@@ -234,6 +288,33 @@ export function Step4Detalles({ form }: Props) {
               options={SiNoOptions}
             />
           </FormField>
+
+          <FormField
+            label="Artículo infringido (tal como aparece en la notificación)"
+            hint="Ej: 76.A LSV — cópialo exactamente de la notificación"
+            error={errors.articulo_infringido?.message}
+          >
+            <Input
+              {...register("articulo_infringido")}
+              placeholder="Ej: 76.A LSV"
+            />
+          </FormField>
+
+          <FormField
+            label="¿La notificación indica que ya se aplicó la tolerancia metrológica?"
+            hint='Busca el texto "APLICADA TOLERANCIA CONFORME A LA NORMATIVA DE CONTROL METROLÓGICO"'
+            error={errors.tolerancia_aplicada?.message}
+          >
+            <RadioGroup
+              name="tolerancia_aplicada"
+              value={boolField("tolerancia_aplicada")}
+              onChange={(v) => setBool("tolerancia_aplicada", v)}
+              options={[
+                { value: "no", label: "No aparece ese texto" },
+                { value: "si", label: "Sí, indica que ya aplicó tolerancia" },
+              ]}
+            />
+          </FormField>
         </>
       )}
 
@@ -259,6 +340,33 @@ export function Step4Detalles({ form }: Props) {
             <Input
               {...register("tiempo_estacionado")}
               placeholder="Ej: 30 minutos"
+            />
+          </FormField>
+
+          <FormField
+            label="Artículo infringido (tal como aparece en la notificación)"
+            hint="Ej: 76.A LSV — cópialo exactamente de la notificación"
+            error={errors.articulo_infringido?.message}
+          >
+            <Input
+              {...register("articulo_infringido")}
+              placeholder="Ej: 76.A LSV"
+            />
+          </FormField>
+
+          <FormField
+            label="¿La notificación indica que ya se aplicó la tolerancia metrológica?"
+            hint='Busca el texto "APLICADA TOLERANCIA CONFORME A LA NORMATIVA DE CONTROL METROLÓGICO"'
+            error={errors.tolerancia_aplicada?.message}
+          >
+            <RadioGroup
+              name="tolerancia_aplicada"
+              value={boolField("tolerancia_aplicada")}
+              onChange={(v) => setBool("tolerancia_aplicada", v)}
+              options={[
+                { value: "no", label: "No aparece ese texto" },
+                { value: "si", label: "Sí, indica que ya aplicó tolerancia" },
+              ]}
             />
           </FormField>
         </>
@@ -300,6 +408,32 @@ export function Step4Detalles({ form }: Props) {
               value={boolField("firmo_denuncia")}
               onChange={(v) => setBool("firmo_denuncia", v)}
               options={SiNoOptions}
+            />
+          </FormField>
+          <FormField
+            label="Artículo infringido (tal como aparece en la notificación)"
+            hint="Ej: 76.A LSV — cópialo exactamente de la notificación"
+            error={errors.articulo_infringido?.message}
+          >
+            <Input
+              {...register("articulo_infringido")}
+              placeholder="Ej: 76.A LSV"
+            />
+          </FormField>
+
+          <FormField
+            label="¿La notificación indica que ya se aplicó la tolerancia metrológica?"
+            hint='Busca el texto "APLICADA TOLERANCIA CONFORME A LA NORMATIVA DE CONTROL METROLÓGICO"'
+            error={errors.tolerancia_aplicada?.message}
+          >
+            <RadioGroup
+              name="tolerancia_aplicada"
+              value={boolField("tolerancia_aplicada")}
+              onChange={(v) => setBool("tolerancia_aplicada", v)}
+              options={[
+                { value: "no", label: "No aparece ese texto" },
+                { value: "si", label: "Sí, indica que ya aplicó tolerancia" },
+              ]}
             />
           </FormField>
         </>

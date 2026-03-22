@@ -35,6 +35,8 @@ export async function POST(req: NextRequest) {
         tipo_multa: body.tipo_multa,
         importe_multa: body.importe_multa,
         puntos_sancion: body.puntos_sancion ?? 0,
+        articulo_infringido: body.articulo_infringido,
+        tolerancia_aplicada: body.tolerancia_aplicada,
 
         // Campos específicos
         velocidad_detectada: body.velocidad_detectada,
