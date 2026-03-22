@@ -4,6 +4,7 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { EscritoPDF } from "@/lib/pdf/EscritoPDF";
 import { addDays, format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
+import { sendEscritoEmail } from "@/lib/email/sendEmail";
 import React from "react";
 
 const ESCRITO_PROMPT = `Eres un abogado especialista en derecho administrativo sancionador de tráfico en España con 15 años de experiencia.
@@ -223,7 +224,20 @@ export async function POST(req: NextRequest) {
         documento_url: documentoUrl,
       })
       .eq("id", multaId);
-
+    // Enviar email con el PDF
+    try {
+      await sendEscritoEmail({
+        to: multa.email,
+        nombreCompleto: multa.nombre_completo,
+        numeroExpediente: multa.numero_expediente,
+        fechaLimite,
+        organismo: multa.organismo_emisor,
+        documentoUrl,
+      });
+    } catch (emailError) {
+      // El email falla silenciosamente — el usuario puede descargar desde la web
+      console.error("Error enviando email:", emailError);
+    }
     return NextResponse.json({ documentoUrl });
   } catch (error) {
     console.error("Error generando escrito:", error);
