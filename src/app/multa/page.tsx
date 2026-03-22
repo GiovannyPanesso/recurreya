@@ -11,7 +11,7 @@ export default function MultaPage() {
             href="/"
             className="mb-6 inline-block text-xl font-bold text-white"
           >
-            Recurre<span className="text-blue-500">Ya</span>
+            {"Recurre"}
           </Link>
           <h1 className="text-2xl font-bold text-white">Analiza tu multa</h1>
           <p className="mt-2 text-sm text-slate-400">

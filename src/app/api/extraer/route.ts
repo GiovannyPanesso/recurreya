@@ -1,0 +1,157 @@
+import { NextRequest, NextResponse } from "next/server";
+
+const EXTRACTION_PROMPT = `Eres un asistente especializado en analizar notificaciones de multas de tráfico españolas.
+Analiza la imagen o documento y extrae todos los datos que puedas identificar.
+
+Devuelve ÚNICAMENTE un JSON válido con esta estructura (omite los campos que no puedas identificar):
+{
+  "numero_expediente": "string",
+  "fecha_hecho": "YYYY-MM-DDTHH:mm",
+  "fecha_notificacion": "YYYY-MM-DD",
+  "tipo_notificacion": "en_mano|bajo_limpiaparabrisas|correo_certificado|dev_sede_electronica",
+  "tipo_multa": "velocidad_radar|semaforo_rojo|estacionamiento|movil_cinturon|zbe_madrid",
+  "matricula": "string",
+  "marca_modelo": "string",
+  "color_vehiculo": "string",
+  "lugar_infraccion": "string",
+  "tipo_via": "urbana|interurbana",
+  "organismo_emisor": "dgt|ayuntamiento|ccaa",
+  "velocidad_detectada": number,
+  "velocidad_limite": number,
+  "tipo_radar": "fijo|movil|tramo",
+  "numero_agente": "string",
+  "zona_zbe": "zbe_general|zbedep_distrito_centro|zbedep_plaza_eliptica",
+  "clasificacion_ambiental": "A|B|C|ECO|CERO",
+  "medio_prueba": "camara_ocr|agente|foto_rojo",
+  "numero_serie_aparato": "string",
+  "importe_multa": number,
+  "puntos_sancion": number,
+  "nombre_completo": "string",
+  "dni": "string",
+  "direccion": "string"
+}
+
+No incluyas markdown, no incluyas texto adicional. Solo el JSON.`;
+
+async function extractWithGemini(fileBuffer: Buffer, mimeType: string) {
+  const { GoogleGenerativeAI } = await import("@google/generative-ai");
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
+
+  const base64 = fileBuffer.toString("base64");
+
+  const result = await model.generateContent([
+    {
+      inlineData: {
+        mimeType,
+        data: base64,
+      },
+    },
+    EXTRACTION_PROMPT,
+  ]);
+
+  return result.response.text();
+}
+
+async function extractWithAnthropic(fileBuffer: Buffer, mimeType: string) {
+  const Anthropic = (await import("@anthropic-ai/sdk")).default;
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+  const base64 = fileBuffer.toString("base64");
+
+  // Para PDF usamos document, para imágenes usamos image
+  const contentBlock =
+    mimeType === "application/pdf"
+      ? {
+          type: "document" as const,
+          source: {
+            type: "base64" as const,
+            media_type: "application/pdf" as const,
+            data: base64,
+          },
+        }
+      : {
+          type: "image" as const,
+          source: {
+            type: "base64" as const,
+            media_type: mimeType as "image/jpeg" | "image/png" | "image/webp",
+            data: base64,
+          },
+        };
+
+  const message = await client.messages.create({
+    model: "claude-opus-4-5",
+    max_tokens: 1024,
+    messages: [
+      {
+        role: "user",
+        content: [contentBlock, { type: "text", text: EXTRACTION_PROMPT }],
+      },
+    ],
+  });
+
+  const block = message.content[0];
+  return block.type === "text" ? block.text : "";
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
+
+    if (!file) {
+      return NextResponse.json(
+        { error: "No se recibió ningún archivo" },
+        { status: 400 },
+      );
+    }
+
+    // Validar tipo
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "application/pdf",
+    ];
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json(
+        { error: "Tipo de archivo no permitido" },
+        { status: 400 },
+      );
+    }
+
+    // Validar tamaño (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "El archivo supera los 10MB" },
+        { status: 400 },
+      );
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const provider = process.env.AI_PROVIDER ?? "gemini";
+
+    let rawText: string;
+
+    if (provider === "anthropic") {
+      rawText = await extractWithAnthropic(buffer, file.type);
+    } else {
+      rawText = await extractWithGemini(buffer, file.type);
+    }
+
+    // Limpiar y parsear JSON
+    const clean = rawText.replace(/```json|```/g, "").trim();
+    const extracted = JSON.parse(clean);
+
+    return NextResponse.json(extracted);
+  } catch (error) {
+    console.error("Error en extracción:", error);
+    return NextResponse.json(
+      {
+        error:
+          "No se pudieron extraer los datos. Introduce los datos manualmente.",
+      },
+      { status: 500 },
+    );
+  }
+}

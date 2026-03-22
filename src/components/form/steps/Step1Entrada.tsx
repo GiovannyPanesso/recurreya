@@ -6,6 +6,8 @@ import { FormField } from "@/components/ui/FormField";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { AlertTriangle, FileUp, PenLine } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { FileUploader } from "@/components/form/FileUploader";
+import { MultaSchemaType } from "@/lib/validations/multa";
 
 interface Props {
   form: UseFormReturn<MultaFormData>;
@@ -73,7 +75,8 @@ export function Step1Entrada({ form }: Props) {
           required
           error={errors.modo_entrada?.message}
         >
-          <div className="grid gap-3 sm:grid-cols-2">
+          {/* Selector de modo */}
+          <div className="grid gap-3 sm:grid-cols-2 mb-4">
             {[
               {
                 value: "subir_archivo",
@@ -115,6 +118,20 @@ export function Step1Entrada({ form }: Props) {
               </button>
             ))}
           </div>
+
+          {/* Uploader — solo si eligió subir archivo */}
+          {modoEntrada === "subir_archivo" && (
+            <FileUploader
+              onDataExtracted={(data) => {
+                Object.entries(data).forEach(([key, value]) => {
+                  form.setValue(key as keyof MultaSchemaType, value as never);
+                });
+              }}
+              onSkip={() =>
+                setValue("modo_entrada", "manual", { shouldValidate: true })
+              }
+            />
+          )}
         </FormField>
       )}
     </div>
