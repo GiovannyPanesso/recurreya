@@ -102,11 +102,25 @@ export function MultaForm() {
   const onSubmit = async (data: MultaSchemaType) => {
     setIsSubmitting(true);
     try {
-      // Módulo 6: aquí lanzaremos el análisis de IA
-      console.log("Datos del formulario:", data);
-      alert("Formulario completado. Módulo de análisis pendiente.");
+      // 1. Guardar multa en Supabase
+      const res = await fetch("/api/multas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Error al guardar el expediente");
+      }
+
+      const { id } = await res.json();
+
+      // 2. Redirigir a la pantalla de análisis
+      window.location.href = `/multa/analisis?id=${id}`;
     } catch (error) {
       console.error(error);
+      alert("Error al procesar tu expediente. Inténtalo de nuevo.");
     } finally {
       setIsSubmitting(false);
     }
