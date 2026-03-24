@@ -49,7 +49,7 @@ PRINCIPIOS IRRENUNCIABLES:
 6. Prioriza siempre los argumentos más sólidos sobre los más numerosos
 7. El escrito debe ser formal, profesional y directamente presentable ante la Administración`;
 
-const ESCRITO_PROMPT = `${SYSTEM_PROMPT}
+const getEscritoPrompt = (multa: Record<string, unknown>) => `${SYSTEM_PROMPT}
 
 Redacta un escrito de recurso de reposición formal y completo basándote en el expediente y el análisis previo.
 
@@ -106,25 +106,38 @@ REGLAS OBLIGATORIAS:
    - NO incluyas ningún otro bloque de firma en ninguna otra parte del documento
    - NO pongas fechas intermedias ni lugares intermedios
 
-9. ORGANISMO DESTINATARIO:
-   - Dirígete EXACTAMENTE al organismo que emitió la multa
-   - Si es Ayuntamiento, usa municipio_emisor del expediente
-   - NUNCA uses el municipio del domicilio del recurrente como destinatario
+9. ORGANISMO DESTINATARIO — REGLA ABSOLUTA:
+   El municipio del organismo destinatario es: "${multa.municipio_emisor ?? multa.lugar_infraccion}"
+   USA ESE MUNICIPIO Y SOLO ESE en TODO el documento sin excepción.
+   PROHIBIDO usar el municipio del domicilio del recurrente como destinatario.
+   El domicilio del recurrente es donde VIVE, no donde está el organismo.
 
-10. DISCREPANCIA VELOCIDAD FOTO vs BOLETÍN:
+10. FIRMA — REGLA ABSOLUTA:
+    Escribe UNA SOLA firma al final del documento con este formato exacto:
+    "En ${
+      String(multa.direccion ?? "")
+        .split(",")
+        .pop()
+        ?.trim() ?? "Madrid"
+    }, a ${new Date().toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}."
+    "Fdo: ${multa.nombre_completo}"
+    "DNI: ${multa.dni}"
+    NO escribas ninguna otra fecha ni firma en ninguna otra parte del documento.
+
+11. DISCREPANCIA VELOCIDAD FOTO vs BOLETÍN:
     Si velocidad_foto está presente y difiere de velocidad_detectada,
     añade este párrafo: "Incluso tomando como referencia la velocidad
     que figura en la imagen técnica ([velocidad_foto] km/h), tras aplicar
     el margen de error reglamentario, la velocidad corregida resultante
     no justifica la sanción impuesta, lo que refuerza la nulidad."
-   NORMATIVA QUE APLICAS:
+
+NORMATIVA QUE APLICAS:
 - Ley de Seguridad Vial (RDLeg 6/2015)
 - Reglamento General de Circulación (RD 1428/2003)
 - Ley 39/2015 de Procedimiento Administrativo Común
 - Normativa metrológica de cinemómetros
 - Constitución Española (Art. 24 — derecho a la defensa)
 - Constitución Española (Art. 25 — principio de tipicidad)
-
 ESTRUCTURA OBLIGATORIA DEL ESCRITO:
 1. Encabezado formal con datos del expediente y órgano destinatario
 2. Identificación del recurrente (nombre, DNI, domicilio)
@@ -140,6 +153,7 @@ El texto debe estar listo para presentar directamente ante la Administración.`;
 async function generateWithGroq(
   expediente: string,
   resumenInterno: string,
+  multa: Record<string, unknown>,
 ): Promise<string> {
   const Groq = (await import("groq-sdk")).default;
   const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
@@ -155,7 +169,7 @@ async function generateWithGroq(
       },
       {
         role: "user",
-        content: `${ESCRITO_PROMPT}\n\nEXPEDIENTE:\n${expediente}\n\nANÁLISIS PREVIO:\n${resumenInterno}`,
+        content: `${getEscritoPrompt(multa)}\n\nEXPEDIENTE:\n${expediente}\n\nANÁLISIS PREVIO:\n${resumenInterno}`,
       },
     ],
   });
@@ -166,6 +180,7 @@ async function generateWithGroq(
 async function generateWithAnthropic(
   expediente: string,
   resumenInterno: string,
+  multa: Record<string, unknown>,
 ): Promise<string> {
   const Anthropic = (await import("@anthropic-ai/sdk")).default;
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -177,13 +192,15 @@ async function generateWithAnthropic(
     messages: [
       {
         role: "user",
-        content: `${ESCRITO_PROMPT}\n\nEXPEDIENTE:\n${expediente}\n\nANÁLISIS PREVIO:\n${resumenInterno}`,
+        content: `${getEscritoPrompt(multa)}\n\nEXPEDIENTE:\n${expediente}\n\nANÁLISIS PREVIO:\n${resumenInterno}`,
       },
     ],
   });
+
   console.log(
     `📊 Tokens usados - input: ${message.usage.input_tokens}, output: ${message.usage.output_tokens}`,
   );
+
   const block = message.content[0];
   return block.type === "text" ? block.text : "";
 }
@@ -267,11 +284,13 @@ export async function POST(req: NextRequest) {
       escritoTexto = await generateWithAnthropic(
         expedienteConNormativa,
         multa.resumen_interno ?? "",
+        multa,
       );
     } else {
       escritoTexto = await generateWithGroq(
         expedienteConNormativa,
         multa.resumen_interno ?? "",
+        multa,
       );
     }
     console.log(
