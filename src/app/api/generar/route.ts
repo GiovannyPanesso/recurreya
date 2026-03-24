@@ -4,109 +4,86 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { EscritoPDF } from "@/lib/pdf/EscritoPDF";
 import { addDays, format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
-import { sendEscritoEmail } from "@/lib/email/sendEmail";
 import React from "react";
+import { sendEscritoEmail } from "@/lib/email/sendEmail";
 
 const ZBE_MADRID_NORMATIVA = `
 NORMATIVA ZBE MADRID — ACTUALIZADA A MARZO 2026
 
-1. ESTRUCTURA DE ZONAS EN MADRID
-
 A) Madrid ZBE — Todo el término municipal
    - Vehículos prohibidos: clasificación ambiental A
-   - Excepciones: TEPMR, históricos, emergencias, FF.AA.
-   - Control: cámaras OCR y foto-rojos automatizados
+   - Infracción GRAVE — Art. 76.z3 RDLeg 6/2015
 
-B) ZBEDEP Distrito Centro
-   - Restricciones más severas que Madrid ZBE
-   - Infracción LEVE (no grave) según Art. 23.4 Ordenanza
+B) ZBEDEP Distrito Centro / Plaza Elíptica
+   - Infracción LEVE — Art. 23.4 y 24.4 Ordenanza
 
-C) ZBEDEP Plaza Elíptica
-   - Infracción LEVE (no grave) según Art. 24.4 Ordenanza
+MORATORIA 2025-2026:
+- Vehículos A con empadronamiento Madrid antes 1/1/2022
+  deben recibir comunicación informativa, NO multa
+- Si recibieron multa → nulidad del procedimiento
 
-2. MORATORIA VIGENTE A 2026 — CRÍTICO
-
-Período de aviso activo: 1 enero 2025 — 31 diciembre 2026
-- Titulares de vehículos clasificación A que NO tenían
-  prohibida la circulación antes del 1 enero 2025
-- Durante este período deben recibir COMUNICACIÓN
-  INFORMATIVA, no multa sancionadora
-- Si recibieron multa en vez de aviso → defecto
-  procedimental → argumento SÓLIDO de recurso
-
-Vehículos que SÍ se sancionan desde 1 enero 2025:
-- Clasificación A sin empadronamiento/IVTM Madrid
-  antes del 1 enero 2022
-
-3. CLASIFICACIÓN AMBIENTAL
-
-Vehículo A (sin etiqueta DGT):
-- Gasolina matriculado ANTES de 2000
-- Diésel matriculado ANTES de 2006
-
-Vehículos PERMITIDOS: etiqueta B, C, ECO o CERO
-
-4. RÉGIMEN SANCIONADOR
-
-- Norma: Art. 76.z3 RDLeg 6/2015
-- Tipo: infracción GRAVE (ZBE general) / LEVE (ZBEDEP)
-- Sanción: 200€ (100€ con pronto pago)
-- No resta puntos
-
-5. ARGUMENTOS DE RECURSO ZBE POR ORDEN DE SOLIDEZ
-
-1. PERÍODO DE AVISO: vehículo en moratoria que recibió
-   multa en vez de comunicación informativa → nulidad
-2. ERROR OCR: matrícula incorrecta → nulidad
-3. CLASIFICACIÓN INCORRECTA: etiqueta B/C/ECO/CERO
-   pero sancionado → nulidad
-4. FALTA DE SEÑALIZACIÓN: acceso sin señalización
-   ZBE visible → defecto de forma
-5. FALTA DE CERTIFICADO DEL DISPOSITIVO: no consta
-   verificación cámara OCR → solicitar en recurso
-6. DEFECTO DE NOTIFICACIÓN: notificación incorrecta
-   o fuera de plazo → caducidad
-7. EXCEPCIÓN NO RECONOCIDA: TEPMR, histórico,
-   emergencias dado de alta pero sancionado → nulidad
-
-6. PREGUNTAS CLAVE
-
-P1: ¿Clasificación ambiental? Si no es A → multa errónea
-P2: ¿Zona exacta? → cambia grave vs leve
-P3: ¿Empadronado Madrid antes 1 enero 2022?
-    Si sí y recibió multa en 2025-2026 → argumento sólido
-P4: ¿Matrícula coincide exactamente? → error OCR → nulidad
-P5: ¿Había señalización visible? → defecto de forma
-P6: ¿Consta certificado cámara OCR? → si no → solicitarlo
-
-7. ÓRGANO COMPETENTE
-
-Área de Gobierno de Movilidad — Ayuntamiento de Madrid
-(NO es competencia de la DGT)
+ARGUMENTOS POR ORDEN DE SOLIDEZ:
+1. Período de aviso incumplido → nulidad
+2. Error OCR en matrícula → nulidad
+3. Clasificación ambiental incorrecta → nulidad
+4. Falta de señalización ZBE → defecto de forma
+5. Sin certificado del dispositivo → solicitar
+6. Defecto de notificación → caducidad
 `;
-const ESCRITO_PROMPT = `Eres un abogado especialista en derecho administrativo sancionador de tráfico en España con 15 años de experiencia.
+
+const SYSTEM_PROMPT = `Eres un abogado especialista en derecho administrativo sancionador de tráfico en España con 15 años de experiencia en recursos de multas. Tienes un conocimiento exhaustivo de:
+
+- Ley de Seguridad Vial (RDLeg 6/2015)
+- Reglamento General de Circulación (RD 1428/2003)
+- Ley 39/2015 de Procedimiento Administrativo Común
+- Normativa metrológica de cinemómetros (ITM de Cinemómetros)
+- Ordenanza de Movilidad Sostenible de Madrid (2018, modificada 2025)
+- Jurisprudencia de tribunales contencioso-administrativos españoles
+
+PRINCIPIOS IRRENUNCIABLES:
+1. NUNCA inventes argumentos que no están respaldados por los datos del expediente
+2. NUNCA alegues defecto de tipificación si el artículo infringido está claramente indicado
+3. NUNCA alegues que no se aplicó tolerancia si el expediente indica que sí se aplicó
+4. Si no hay argumentos sólidos, redacta un escrito honesto con los argumentos disponibles
+5. Los argumentos débiles o incorrectos restan credibilidad al recurso completo
+6. Prioriza siempre los argumentos más sólidos sobre los más numerosos
+7. El escrito debe ser formal, profesional y directamente presentable ante la Administración`;
+
+const ESCRITO_PROMPT = `${SYSTEM_PROMPT}
+
 Redacta un escrito de recurso de reposición formal y completo basándote en el expediente y el análisis previo.
 
 REGLAS OBLIGATORIAS:
 
 1. MÁRGENES DE ERROR (multas de velocidad):
-   - Radar fijo → resta 5 km/h o 5% (el mayor)
-   - Radar móvil → resta 7 km/h o 7% (el mayor)
+   - Radar fijo: resta 5 km/h o 5% (el mayor)
+   - Radar móvil: resta 7 km/h o 7% (el mayor)
    - Si velocidad corregida ≤ límite → multa nula, indicarlo expresamente
+   - Si tolerancia_aplicada=true: no afirmes que no se aplicó tolerancia.
+     En su lugar alega que no queda acreditado en el expediente si la
+     velocidad notificada es bruta o ya corregida → principio in dubio pro reo
 
 2. CERTIFICADO METROLÓGICO:
-   Si el medio de prueba es radar → incluir siempre párrafo solicitando
-   certificado de verificación metrológica vigente en la fecha de la infracción
+   Si el medio de prueba es radar o cámara → solicitar siempre el
+   certificado de verificación metrológica vigente en la fecha de infracción
 
-3. DEFECTOS DE FORMA:
-   Verificar que el artículo citado corresponde con los hechos.
-   Si no coincide → alegar indefensión (Art. 35 Ley 39/2015)
+3. ARTÍCULO INFRINGIDO:
+   - Si articulo_infringido está presente → NO alegues defecto de tipificación
+   - En su lugar, verifica que el artículo corresponde con los hechos descritos
+   - Si no corresponde → alega indefensión (Art. 35 Ley 39/2015)
 
-4. NOTIFICACIÓN:
+4. CARGA DE LA PRUEBA:
+   La Administración debe acreditar:
+   - Que la medición es correcta y el margen fue aplicado
+   - Que el equipo estaba calibrado y con certificado vigente
+   - Que la identificación del vehículo es inequívoca
+   Alega siempre este principio como fundamento complementario
+
+5. NOTIFICACIÓN:
    Si fue bajo el limpiaparabrisas → alegar defecto de notificación,
    el plazo de 20 días podría no haber comenzado
 
-5. ORGANISMO:
+6. ORGANISMO:
    - DGT → recurso ante Director Provincial de Tráfico
    - Ayuntamiento → alegaciones ante órgano instructor municipal
    - CCAA → adaptar normativa autonómica
@@ -116,17 +93,46 @@ NORMATIVA QUE APLICAS:
 - Reglamento General de Circulación (RD 1428/2003)
 - Ley 39/2015 de Procedimiento Administrativo Común
 - Normativa metrológica de cinemómetros
+- Constitución Española (Art. 24 — derecho a la defensa)
+- Constitución Española (Art. 25 — principio de tipicidad)
 
-ESTRUCTURA DEL ESCRITO:
-1. Encabezado formal con datos del expediente
-2. Identificación del recurrente
-3. Hechos
-4. Fundamentos de derecho (citando artículos concretos)
-5. Solicitud expresa de anulación
-6. Otrosí si procede
+ESTRUCTURA OBLIGATORIA DEL ESCRITO:
+1. Encabezado formal con datos del expediente y órgano destinatario
+2. Identificación del recurrente (nombre, DNI, domicilio)
+3. Antecedentes de hecho (numerados)
+4. Fundamentos de derecho (numerados, con artículos concretos)
+5. Solicitud expresa de anulación o archivo
+6. Otrosí (solicitud de diligencias si procede)
+7. Lugar, fecha y firma
 
-Devuelve ÚNICAMENTE el texto del escrito, sin markdown, sin explicaciones adicionales.
-El texto debe estar listo para copiar en un documento oficial.`;
+Devuelve ÚNICAMENTE el texto del escrito, sin markdown, sin explicaciones.
+El texto debe estar listo para presentar directamente ante la Administración.`;
+
+async function generateWithGroq(
+  expediente: string,
+  resumenInterno: string,
+): Promise<string> {
+  const Groq = (await import("groq-sdk")).default;
+  const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+  const completion = await client.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
+    max_tokens: 4096,
+    temperature: 0.2,
+    messages: [
+      {
+        role: "system",
+        content: SYSTEM_PROMPT,
+      },
+      {
+        role: "user",
+        content: `${ESCRITO_PROMPT}\n\nEXPEDIENTE:\n${expediente}\n\nANÁLISIS PREVIO:\n${resumenInterno}`,
+      },
+    ],
+  });
+
+  return completion.choices[0]?.message?.content ?? "";
+}
 
 async function generateWithAnthropic(
   expediente: string,
@@ -138,6 +144,7 @@ async function generateWithAnthropic(
   const message = await client.messages.create({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 4096,
+    system: SYSTEM_PROMPT,
     messages: [
       {
         role: "user",
@@ -150,20 +157,6 @@ async function generateWithAnthropic(
   return block.type === "text" ? block.text : "";
 }
 
-async function generateWithGemini(
-  expediente: string,
-  resumenInterno: string,
-): Promise<string> {
-  const { GoogleGenerativeAI } = await import("@google/generative-ai");
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-  const result = await model.generateContent(
-    `${ESCRITO_PROMPT}\n\nEXPEDIENTE:\n${expediente}\n\nANÁLISIS PREVIO:\n${resumenInterno}`,
-  );
-  return result.response.text();
-}
-
 export async function POST(req: NextRequest) {
   try {
     const { multaId } = await req.json();
@@ -174,7 +167,6 @@ export async function POST(req: NextRequest) {
 
     const supabase = createAdminClient();
 
-    // Obtener la multa
     const { data: multa, error } = await supabase
       .from("multas")
       .select("*")
@@ -188,7 +180,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verificar que está pagada
     if (multa.estado !== "pagado") {
       return NextResponse.json(
         { error: "El pago no ha sido confirmado" },
@@ -196,12 +187,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Si ya tiene documento generado, devolver la URL existente
     if (multa.documento_url) {
       return NextResponse.json({ documentoUrl: multa.documento_url });
     }
 
-    // Preparar expediente para la IA
     const expediente = JSON.stringify(
       {
         tipo_multa: multa.tipo_multa,
@@ -217,6 +206,8 @@ export async function POST(req: NextRequest) {
         tipo_radar: multa.tipo_radar,
         zona_zbe: multa.zona_zbe,
         clasificacion_ambiental: multa.clasificacion_ambiental,
+        empadronado_madrid_antes_2022: multa.empadronado_madrid_antes_2022,
+        matricula_coincide: multa.matricula_coincide,
         medio_prueba: multa.medio_prueba,
         numero_serie_aparato: multa.numero_serie_aparato,
         importe_multa: multa.importe_multa,
@@ -225,18 +216,19 @@ export async function POST(req: NextRequest) {
         dni: multa.dni,
         direccion: multa.direccion,
         numero_expediente: multa.numero_expediente,
+        articulo_infringido: multa.articulo_infringido,
+        tolerancia_aplicada: multa.tolerancia_aplicada,
       },
       null,
       2,
     );
 
-    // Generar escrito con IA
     const expedienteConNormativa =
       multa.tipo_multa === "zbe_madrid"
         ? `${expediente}\n\nNORMATIVA APLICABLE:\n${ZBE_MADRID_NORMATIVA}`
         : expediente;
 
-    const provider = process.env.AI_PROVIDER ?? "gemini";
+    const provider = process.env.AI_PROVIDER ?? "groq";
     let escritoTexto: string;
 
     if (provider === "anthropic") {
@@ -245,27 +237,24 @@ export async function POST(req: NextRequest) {
         multa.resumen_interno ?? "",
       );
     } else {
-      escritoTexto = await generateWithGemini(
+      escritoTexto = await generateWithGroq(
         expedienteConNormativa,
         multa.resumen_interno ?? "",
       );
     }
 
-    // Calcular fecha límite
     const fechaLimite = format(
       addDays(parseISO(multa.fecha_notificacion), 20),
       "d 'de' MMMM 'de' yyyy",
       { locale: es },
     );
 
-    // Mapear organismo a texto legible
     const organismoTexto: Record<string, string> = {
       dgt: "Dirección General de Tráfico — Jefatura Provincial",
-      ayuntamiento: `Departamento de Instrucción de Multas — Ayuntamiento`,
+      ayuntamiento: "Departamento de Instrucción de Multas — Ayuntamiento",
       ccaa: "Organismo competente de la Comunidad Autónoma",
     };
 
-    // Cambiar la llamada a renderToBuffer
     const pdfBuffer = await renderToBuffer(
       React.createElement(EscritoPDF, {
         escrito: escritoTexto,
@@ -279,7 +268,6 @@ export async function POST(req: NextRequest) {
       }) as unknown as React.ReactElement<Record<string, unknown>>,
     );
 
-    // Subir PDF a Supabase Storage
     const fileName = `recurso_${multa.numero_expediente.replace(/\//g, "-")}_${Date.now()}.pdf`;
 
     const { error: uploadError } = await supabase.storage
@@ -291,14 +279,12 @@ export async function POST(req: NextRequest) {
 
     if (uploadError) throw uploadError;
 
-    // Obtener URL firmada (válida 7 días)
     const { data: signedUrl } = await supabase.storage
       .from("documentos")
       .createSignedUrl(fileName, 60 * 60 * 24 * 7);
 
     const documentoUrl = signedUrl?.signedUrl ?? "";
 
-    // Actualizar multa con URL del documento
     await supabase
       .from("multas")
       .update({
@@ -306,7 +292,7 @@ export async function POST(req: NextRequest) {
         documento_url: documentoUrl,
       })
       .eq("id", multaId);
-    // Enviar email con el PDF
+
     try {
       await sendEscritoEmail({
         to: multa.email,
@@ -317,9 +303,9 @@ export async function POST(req: NextRequest) {
         documentoUrl,
       });
     } catch (emailError) {
-      // El email falla silenciosamente — el usuario puede descargar desde la web
       console.error("Error enviando email:", emailError);
     }
+
     return NextResponse.json({ documentoUrl });
   } catch (error) {
     console.error("Error generando escrito:", error);
