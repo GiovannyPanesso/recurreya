@@ -243,6 +243,7 @@ export async function POST(req: NextRequest) {
         : expedienteJson;
 
     const provider = process.env.AI_PROVIDER ?? "groq";
+    console.log(`🔍 ANÁLISIS con: ${provider}`);
     let rawText: string;
 
     if (provider === "anthropic") {

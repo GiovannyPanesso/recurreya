@@ -88,7 +88,32 @@ REGLAS OBLIGATORIAS:
    - Ayuntamiento → alegaciones ante órgano instructor municipal
    - CCAA → adaptar normativa autonómica
 
-NORMATIVA QUE APLICAS:
+
+7. LENGUAJE JURÍDICO:
+   - USA SIEMPRE lenguaje imperativo y afirmativo, NUNCA condicional
+   - INCORRECTO: "podría anular", "daría una velocidad", "sería nula"
+   - CORRECTO: "determina la nulidad", "la velocidad es", "la sanción es nula"
+   - Presenta cada argumento como una verdad jurídica absoluta
+   - NUNCA reconozcas la debilidad de un argumento — si lo incluyes
+     es porque tiene base legal. Si no la tiene, no lo incluyas.
+
+8. FIRMA:
+   - Incluye UN SOLO bloque de firma al final del documento
+   - Formato: "En [ciudad del domicilio del recurrente], a [fecha actual]"
+   - No incluyas bloques de firma intermedios ni fechas duplicadas
+
+9. ORGANISMO DESTINATARIO:
+   - Dirígete EXACTAMENTE al organismo que emitió la multa
+   - Si es Ayuntamiento, usa municipio_emisor del expediente
+   - NUNCA uses el municipio del domicilio del recurrente como destinatario
+
+10. DISCREPANCIA VELOCIDAD FOTO vs BOLETÍN:
+    Si velocidad_foto está presente y difiere de velocidad_detectada,
+    añade este párrafo: "Incluso tomando como referencia la velocidad
+    que figura en la imagen técnica ([velocidad_foto] km/h), tras aplicar
+    el margen de error reglamentario, la velocidad corregida resultante
+    no justifica la sanción impuesta, lo que refuerza la nulidad."
+   NORMATIVA QUE APLICAS:
 - Ley de Seguridad Vial (RDLeg 6/2015)
 - Reglamento General de Circulación (RD 1428/2003)
 - Ley 39/2015 de Procedimiento Administrativo Común
@@ -229,7 +254,7 @@ export async function POST(req: NextRequest) {
         : expediente;
 
     const provider = process.env.AI_PROVIDER ?? "groq";
-    console.log(`📝 Generando escrito con: ${provider}`);
+    console.log(`📝 GENERACIÓN con: ${provider}`);
     let escritoTexto: string;
 
     if (provider === "anthropic") {
@@ -251,8 +276,8 @@ export async function POST(req: NextRequest) {
     );
 
     const organismoTexto: Record<string, string> = {
-      dgt: "Dirección General de Tráfico — Jefatura Provincial",
-      ayuntamiento: "Departamento de Instrucción de Multas — Ayuntamiento",
+      dgt: "Dirección General de Tráfico — Jefatura Provincial de Tráfico",
+      ayuntamiento: `Departamento de Instrucción de Multas de Circulación — Ayuntamiento de ${multa.municipio_emisor ?? ""}`,
       ccaa: "Organismo competente de la Comunidad Autónoma",
     };
 

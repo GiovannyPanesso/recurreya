@@ -70,6 +70,8 @@ export const multaSchema = z.object({
   firmo_denuncia: z.boolean().optional(),
   articulo_infringido: z.string().optional(),
   tolerancia_aplicada: z.boolean().optional(),
+  municipio_emisor: z.string().optional(),
+  velocidad_foto: z.number().optional(),
 
   // Step 5
   importe_multa: z.number({ error: "El importe es obligatorio" }).positive(),

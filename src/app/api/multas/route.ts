@@ -49,6 +49,8 @@ export async function POST(req: NextRequest) {
         matricula_coincide: body.matricula_coincide,
         medio_prueba: body.medio_prueba,
         numero_serie_aparato: body.numero_serie_aparato,
+        municipio_emisor: body.municipio_emisor,
+        velocidad_foto: body.velocidad_foto,
 
         // Conductor
         nombre_completo: body.nombre_completo,

@@ -110,6 +110,7 @@ export async function POST(req: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
+    console.log(`📄 EXTRACCIÓN con: Anthropic`);
     const rawText = await extractWithAnthropic(buffer, file.type);
 
     // Limpiar y parsear JSON

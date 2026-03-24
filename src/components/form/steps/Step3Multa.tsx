@@ -123,6 +123,20 @@ export function Step3Multa({ form }: Props) {
           ]}
         />
       </FormField>
+      {watch("organismo_emisor") === "ayuntamiento" && (
+        <FormField
+          label="¿Qué Ayuntamiento emitió la multa?"
+          required
+          error={errors.municipio_emisor?.message}
+          hint="El municipio donde ocurrió la infracción, no donde vives tú"
+        >
+          <Input
+            {...register("municipio_emisor")}
+            placeholder="Ej: Madrid, Barcelona, Fuenlabrada..."
+            error={!!errors.municipio_emisor}
+          />
+        </FormField>
+      )}
     </div>
   );
 }
