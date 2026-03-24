@@ -58,13 +58,10 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   aviso: {
-    marginTop: 30,
-    padding: 10,
-    backgroundColor: "#f5f5f5",
-    fontSize: 9,
-    color: "#666",
-    borderLeftWidth: 3,
-    borderLeftColor: "#1a3a6e",
+    marginTop: 20,
+    fontSize: 8,
+    color: "#bbbbbb",
+    textAlign: "center",
   },
 });
 
@@ -156,10 +153,8 @@ export function EscritoPDF({
         {/* Aviso legal */}
         <View style={styles.aviso}>
           <Text>
-            Documento generado por RecurreYa (recurreya.es). RecurreYa es una
-            herramienta de redacción asistida por IA, no un despacho de
-            abogados. Este escrito no garantiza el resultado del recurso. Plazo
-            límite de presentación: {fechaLimite}.
+            Documento generado con asistencia de RecurreYa (recurreya.es) ·
+            Plazo límite de presentación: {fechaLimite}.
           </Text>
         </View>
       </Page>

@@ -97,10 +97,14 @@ REGLAS OBLIGATORIAS:
    - NUNCA reconozcas la debilidad de un argumento — si lo incluyes
      es porque tiene base legal. Si no la tiene, no lo incluyas.
 
-8. FIRMA:
-   - Incluye UN SOLO bloque de firma al final del documento
-   - Formato: "En [ciudad del domicilio del recurrente], a [fecha actual]"
-   - No incluyas bloques de firma intermedios ni fechas duplicadas
+8. FIRMA — MUY IMPORTANTE:
+   - Incluye EXACTAMENTE UN SOLO bloque de firma al final
+   - Usa SOLO la ciudad del domicilio del recurrente
+   - Formato exacto: "En [ciudad], a [fecha actual]"
+   - Fdo: [nombre completo]
+   - DNI: [dni]
+   - NO incluyas ningún otro bloque de firma en ninguna otra parte del documento
+   - NO pongas fechas intermedias ni lugares intermedios
 
 9. ORGANISMO DESTINATARIO:
    - Dirígete EXACTAMENTE al organismo que emitió la multa
@@ -177,7 +181,9 @@ async function generateWithAnthropic(
       },
     ],
   });
-
+  console.log(
+    `📊 Tokens usados - input: ${message.usage.input_tokens}, output: ${message.usage.output_tokens}`,
+  );
   const block = message.content[0];
   return block.type === "text" ? block.text : "";
 }
@@ -268,6 +274,9 @@ export async function POST(req: NextRequest) {
         multa.resumen_interno ?? "",
       );
     }
+    console.log(
+      `📊 Escrito generado - longitud: ${escritoTexto.length} caracteres`,
+    );
 
     const fechaLimite = format(
       addDays(parseISO(multa.fecha_notificacion), 20),
