@@ -229,6 +229,7 @@ export async function POST(req: NextRequest) {
         : expediente;
 
     const provider = process.env.AI_PROVIDER ?? "groq";
+    console.log(`📝 Generando escrito con: ${provider}`);
     let escritoTexto: string;
 
     if (provider === "anthropic") {
