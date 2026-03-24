@@ -33,26 +33,6 @@ Devuelve ÚNICAMENTE un JSON válido con esta estructura (omite los campos que n
 
 No incluyas markdown, no incluyas texto adicional. Solo el JSON.`;
 
-async function extractWithGemini(fileBuffer: Buffer, mimeType: string) {
-  const { GoogleGenerativeAI } = await import("@google/generative-ai");
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
-
-  const base64 = fileBuffer.toString("base64");
-
-  const result = await model.generateContent([
-    {
-      inlineData: {
-        mimeType,
-        data: base64,
-      },
-    },
-    EXTRACTION_PROMPT,
-  ]);
-
-  return result.response.text();
-}
-
 async function extractWithAnthropic(fileBuffer: Buffer, mimeType: string) {
   const Anthropic = (await import("@anthropic-ai/sdk")).default;
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -129,15 +109,8 @@ export async function POST(req: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const provider = process.env.AI_PROVIDER ?? "gemini";
 
-    let rawText: string;
-
-    if (provider === "anthropic") {
-      rawText = await extractWithAnthropic(buffer, file.type);
-    } else {
-      rawText = await extractWithGemini(buffer, file.type);
-    }
+    const rawText = await extractWithAnthropic(buffer, file.type);
 
     // Limpiar y parsear JSON
     const clean = rawText.replace(/```json|```/g, "").trim();
