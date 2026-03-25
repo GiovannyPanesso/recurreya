@@ -23,6 +23,8 @@ Devuelve ÚNICAMENTE un JSON válido con esta estructura (omite los campos que n
   "zona_zbe": "zbe_general|zbedep_distrito_centro|zbedep_plaza_eliptica",
   "clasificacion_ambiental": "A|B|C|ECO|CERO",
   "medio_prueba": "camara_ocr|agente|foto_rojo",
+  "tolerancia_aplicada": true/false (busca el texto "APLICADA TOLERANCIA CONFORME A LA NORMATIVA DE CONTROL METROLOGICO" — si aparece devuelve true, si no aparece devuelve false),
+  "articulo_infringido": "artículo infringido tal como aparece en la notificación (ej: 76.A LSV)",
   "numero_serie_aparato": "string",
   "importe_multa": number,
   "puntos_sancion": number,

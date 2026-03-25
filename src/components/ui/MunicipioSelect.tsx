@@ -109,7 +109,7 @@ export function MunicipioSelect({
         type="text"
         value={query}
         onChange={handleInput}
-        onFocus={() => setOpen(true)}
+        onFocus={() => setOpen(query.length > 0)}
         placeholder="Ej: Madrid, Barcelona..."
         className={cn(
           "w-full rounded-lg border bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none transition",

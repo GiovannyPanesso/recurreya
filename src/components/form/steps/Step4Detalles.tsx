@@ -112,8 +112,8 @@ export function Step4Detalles({ form }: Props) {
           </FormField>
 
           <FormField
-            label="Artículo infringido (tal como aparece en la notificación)"
-            hint="Ej: 76.A LSV — cópialo exactamente de la notificación"
+            label="Artículo infringido"
+            hint="Cópialo exactamente de la notificación. Ej: 76.A LSV, 91.2 LSV..."
             error={errors.articulo_infringido?.message}
           >
             <Input
@@ -121,10 +121,9 @@ export function Step4Detalles({ form }: Props) {
               placeholder="Ej: 76.A LSV"
             />
           </FormField>
-
           <FormField
             label="¿La notificación indica que ya se aplicó la tolerancia metrológica?"
-            hint='Busca el texto "APLICADA TOLERANCIA CONFORME A LA NORMATIVA DE CONTROL METROLÓGICO"'
+            hint='Busca en tu notificación el texto "APLICADA TOLERANCIA CONFORME A LA NORMATIVA DE CONTROL METROLÓGICO"'
             error={errors.tolerancia_aplicada?.message}
           >
             <RadioGroup
@@ -132,8 +131,16 @@ export function Step4Detalles({ form }: Props) {
               value={boolField("tolerancia_aplicada")}
               onChange={(v) => setBool("tolerancia_aplicada", v)}
               options={[
-                { value: "no", label: "No aparece ese texto" },
-                { value: "si", label: "Sí, indica que ya aplicó tolerancia" },
+                {
+                  value: "si",
+                  label: "Sí — aparece ese texto en la notificación",
+                  description: "La Administración dice que ya aplicó el margen",
+                },
+                {
+                  value: "no",
+                  label: "No — no aparece ese texto",
+                  description: "No consta que se haya aplicado el margen",
+                },
               ]}
             />
           </FormField>

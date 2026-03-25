@@ -37,6 +37,7 @@ const DEV_DATA: Partial<MultaSchemaType> = {
   marca_modelo: "Seat Ibiza",
   color_vehiculo: "Blanco",
   lugar_infraccion: "Calle Mayor 10, Madrid",
+  articulo_infringido: "76.A LSV",
   tipo_via: "urbana",
   organismo_emisor: "ayuntamiento",
   clasificacion_ambiental: "A",

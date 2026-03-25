@@ -49,13 +49,17 @@ export default function LandingPage() {
           </h1>
 
           <p className="mx-auto mb-10 max-w-xl text-lg text-slate-400">
-            La IA analiza tu expediente y genera un escrito de recurso
+            RecurreYa analiza tu expediente y genera un escrito de recurso
             profesional en minutos.{" "}
             <span className="text-white">Solo pagas 4,99€</span> si encontramos
             argumentos.
           </p>
 
-          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-sm text-slate-400">
+              ✓ Análisis gratuito · ✓ Solo pagas si recurres · ✓ 4,99€ único
+              pago
+            </p>
             <Link
               href="/multa"
               className="group flex items-center gap-2 rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-500"
@@ -66,9 +70,6 @@ export default function LandingPage() {
                 className="transition-transform group-hover:translate-x-1"
               />
             </Link>
-            <span className="text-sm text-slate-500">
-              El análisis previo es gratuito · Solo pagas si recurres
-            </span>
           </div>
         </div>
 
