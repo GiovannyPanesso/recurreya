@@ -16,7 +16,7 @@ import { Step4Detalles } from "./steps/Step4Detalles";
 import { Step5Importe } from "./steps/Step5Importe";
 import { Step6Datos } from "./steps/Step6Datos";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
-import { cn } from "@/utils/cn";
+import { differenceInDays, parseISO } from "date-fns";
 
 const TOTAL_STEPS = 6;
 
@@ -86,6 +86,18 @@ export function MultaForm() {
 
     // Bloquear si ya pagó
     if (currentStep === 1 && yaPagada === true) return;
+
+    // Bloquear si el plazo ha caducado (Step 2)
+    if (currentStep === 2) {
+      const fechaNotificacion = form.getValues("fecha_notificacion");
+      if (fechaNotificacion) {
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        const diasRestantes =
+          20 - differenceInDays(hoy, parseISO(fechaNotificacion));
+        if (diasRestantes <= 0) return;
+      }
+    }
 
     if (currentStep < TOTAL_STEPS) {
       setCurrentStep((s) => s + 1);
@@ -185,13 +197,17 @@ export function MultaForm() {
             <button
               type="button"
               onClick={handleNext}
-              disabled={currentStep === 1 && yaPagada === true}
-              className={cn(
-                "flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-semibold transition",
-                currentStep === 1 && yaPagada === true
-                  ? "cursor-not-allowed bg-white/5 text-slate-600"
-                  : "bg-blue-600 text-white hover:bg-blue-500",
-              )}
+              disabled={
+                (currentStep === 1 && yaPagada === true) ||
+                (currentStep === 2 &&
+                  (() => {
+                    const fecha = form.getValues("fecha_notificacion");
+                    if (!fecha) return false;
+                    const hoy = new Date();
+                    hoy.setHours(0, 0, 0, 0);
+                    return 20 - differenceInDays(hoy, parseISO(fecha)) <= 0;
+                  })())
+              }
             >
               Continuar
               <ChevronRight size={16} />
