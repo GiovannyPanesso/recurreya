@@ -4,6 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 import { MultaSchemaType as MultaFormData } from "@/lib/validations/multa";
 import { FormField, Input, Select } from "@/components/ui/FormField";
 import { RadioGroup } from "@/components/ui/RadioGroup";
+import { MunicipioSelect } from "@/components/ui/MunicipioSelect";
 
 interface Props {
   form: UseFormReturn<MultaFormData>;
@@ -28,7 +29,6 @@ export function Step3Multa({ form }: Props) {
           Cuéntanos qué tipo de infracción es
         </p>
       </div>
-
       <FormField
         label="¿Qué tipo de multa es?"
         required
@@ -51,7 +51,6 @@ export function Step3Multa({ form }: Props) {
           ]}
         />
       </FormField>
-
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField label="Matrícula" required error={errors.matricula?.message}>
           <Input
@@ -65,7 +64,6 @@ export function Step3Multa({ form }: Props) {
           <Input {...register("marca_modelo")} placeholder="Ej: Seat Ibiza" />
         </FormField>
       </div>
-
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           label="Color del vehículo"
@@ -86,7 +84,6 @@ export function Step3Multa({ form }: Props) {
           </Select>
         </FormField>
       </div>
-
       <FormField
         label="Lugar exacto de la infracción"
         required
@@ -98,7 +95,6 @@ export function Step3Multa({ form }: Props) {
           error={!!errors.lugar_infraccion}
         />
       </FormField>
-
       <FormField
         label="Organismo que emite la multa"
         required
@@ -130,9 +126,11 @@ export function Step3Multa({ form }: Props) {
           error={errors.municipio_emisor?.message}
           hint="El municipio donde ocurrió la infracción, no donde vives tú"
         >
-          <Input
-            {...register("municipio_emisor")}
-            placeholder="Ej: Madrid, Barcelona, Fuenlabrada..."
+          <MunicipioSelect
+            value={watch("municipio_emisor") ?? ""}
+            onChange={(v) =>
+              setValue("municipio_emisor", v, { shouldValidate: true })
+            }
             error={!!errors.municipio_emisor}
           />
         </FormField>
