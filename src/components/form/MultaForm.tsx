@@ -17,6 +17,7 @@ import { Step5Importe } from "./steps/Step5Importe";
 import { Step6Datos } from "./steps/Step6Datos";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { differenceInDays, parseISO } from "date-fns";
+import { cn } from "@/utils/cn";
 
 const TOTAL_STEPS = 6;
 
@@ -158,6 +159,18 @@ export function MultaForm() {
     }
   };
 
+  const plazoCaducado = (() => {
+    if (currentStep !== 2) return false;
+    const fecha = form.getValues("fecha_notificacion");
+    if (!fecha) return false;
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    return 20 - differenceInDays(hoy, parseISO(fecha)) <= 0;
+  })();
+
+  const continueDisabled =
+    (currentStep === 1 && yaPagada === true) || plazoCaducado;
+
   return (
     <div className="rounded-2xl border border-white/5 bg-white/3 p-6 sm:p-8">
       <StepIndicator currentStep={currentStep} />
@@ -197,17 +210,13 @@ export function MultaForm() {
             <button
               type="button"
               onClick={handleNext}
-              disabled={
-                (currentStep === 1 && yaPagada === true) ||
-                (currentStep === 2 &&
-                  (() => {
-                    const fecha = form.getValues("fecha_notificacion");
-                    if (!fecha) return false;
-                    const hoy = new Date();
-                    hoy.setHours(0, 0, 0, 0);
-                    return 20 - differenceInDays(hoy, parseISO(fecha)) <= 0;
-                  })())
-              }
+              disabled={continueDisabled}
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-semibold transition",
+                continueDisabled
+                  ? "cursor-not-allowed bg-white/5 text-slate-600"
+                  : "bg-blue-600 text-white hover:bg-blue-500",
+              )}
             >
               Continuar
               <ChevronRight size={16} />

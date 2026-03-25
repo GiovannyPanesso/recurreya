@@ -2,7 +2,7 @@
 
 import { UseFormReturn } from "react-hook-form";
 import { MultaSchemaType as MultaFormData } from "@/lib/validations/multa";
-import { FormField, Input, Select } from "@/components/ui/FormField";
+import { FormField, Input } from "@/components/ui/FormField";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { differenceInDays, parseISO } from "date-fns";
 import { AlertTriangle, Clock } from "lucide-react";
