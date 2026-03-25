@@ -16,6 +16,7 @@ Devuelve ÚNICAMENTE un JSON válido con esta estructura (omite los campos que n
   "lugar_infraccion": "string",
   "tipo_via": "urbana|interurbana",
   "organismo_emisor": "dgt|ayuntamiento|ccaa",
+  "municipio_emisor": "municipio del Ayuntamiento que emite la multa (NO el municipio del domicilio del titular). Ej: Madrid, Barcelona, Fuenlabrada...",
   "velocidad_detectada": number,
   "velocidad_limite": number,
   "tipo_radar": "fijo|movil|tramo",
