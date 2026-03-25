@@ -1,5 +1,6 @@
+import { Suspense } from "react";
 import { ResultadoContent } from "@/components/form/ResultadoContent";
-import { Link } from "lucide-react";
+import { Link, Loader2 } from "lucide-react";
 
 export default function ResultadoPage() {
   return (
@@ -13,7 +14,16 @@ export default function ResultadoPage() {
             RecurreYa
           </Link>
         </div>
-        <ResultadoContent />
+        <Suspense
+          fallback={
+            <div className="flex flex-col items-center justify-center gap-4 py-24">
+              <Loader2 size={40} className="animate-spin text-blue-500" />
+              <p className="text-slate-400">Cargando...</p>
+            </div>
+          }
+        >
+          <ResultadoContent />
+        </Suspense>
       </div>
     </main>
   );
