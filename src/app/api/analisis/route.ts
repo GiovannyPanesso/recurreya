@@ -197,6 +197,17 @@ export async function POST(req: NextRequest) {
         { status: 429 },
       );
     }
+    // Validación de origen
+    const origin = req.headers.get("origin");
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "https://recurreya.vercel.app",
+      "https://recurreya.es",
+      "https://www.recurreya.es",
+    ];
+    if (origin && !allowedOrigins.includes(origin)) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 403 });
+    }
     const body = await req.json();
     const { multaId } = body;
 

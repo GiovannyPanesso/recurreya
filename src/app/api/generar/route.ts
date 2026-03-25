@@ -220,6 +220,7 @@ export async function POST(req: NextRequest) {
     const origin = req.headers.get("origin");
     const allowedOrigins = [
       "http://localhost:3000",
+      "https://recurreya.vercel.app",
       "https://recurreya.es",
       "https://www.recurreya.es",
     ];
