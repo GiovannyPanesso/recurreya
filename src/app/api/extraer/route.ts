@@ -90,6 +90,7 @@ export async function POST(req: NextRequest) {
     }
     // Validación de origen
     const origin = req.headers.get("origin");
+    console.log(`🔍 Origin recibido: ${origin}`);
     const allowedOrigins = [
       "http://localhost:3000",
       "https://recurreya.vercel.app",
