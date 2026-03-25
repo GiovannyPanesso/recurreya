@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 
+const sanitize = (str: string) => {
+  return str
+    .trim()
+    .replace(/<[^>]*>/g, "")
+    .replace(/[<>'"]/g, "");
+};
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const supabase = createAdminClient();
 
-    // Obtener IP para consentimiento RGPD
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0] ||
       req.headers.get("x-real-ip") ||
@@ -16,7 +22,7 @@ export async function POST(req: NextRequest) {
       .from("multas")
       .insert({
         // Notificación
-        numero_expediente: body.numero_expediente,
+        numero_expediente: sanitize(body.numero_expediente),
         fecha_hecho: body.fecha_hecho,
         fecha_notificacion: body.fecha_notificacion,
         tipo_notificacion: body.tipo_notificacion,
@@ -24,10 +30,12 @@ export async function POST(req: NextRequest) {
         ya_pagada: body.ya_pagada,
 
         // Vehículo
-        matricula: body.matricula,
-        marca_modelo: body.marca_modelo,
-        color_vehiculo: body.color_vehiculo,
-        lugar_infraccion: body.lugar_infraccion,
+        matricula: sanitize(body.matricula),
+        marca_modelo: body.marca_modelo ? sanitize(body.marca_modelo) : null,
+        color_vehiculo: body.color_vehiculo
+          ? sanitize(body.color_vehiculo)
+          : null,
+        lugar_infraccion: sanitize(body.lugar_infraccion),
         tipo_via: body.tipo_via,
         organismo_emisor: body.organismo_emisor,
 
@@ -35,27 +43,33 @@ export async function POST(req: NextRequest) {
         tipo_multa: body.tipo_multa,
         importe_multa: body.importe_multa,
         puntos_sancion: body.puntos_sancion ?? 0,
-        articulo_infringido: body.articulo_infringido,
+        articulo_infringido: body.articulo_infringido
+          ? sanitize(body.articulo_infringido)
+          : null,
         tolerancia_aplicada: body.tolerancia_aplicada,
 
         // Campos específicos
         velocidad_detectada: body.velocidad_detectada,
         velocidad_limite: body.velocidad_limite,
         tipo_radar: body.tipo_radar,
-        numero_agente: body.numero_agente,
+        numero_agente: body.numero_agente ? sanitize(body.numero_agente) : null,
         zona_zbe: body.zona_zbe,
         clasificacion_ambiental: body.clasificacion_ambiental,
         empadronado_madrid_antes_2022: body.empadronado_madrid_antes_2022,
         matricula_coincide: body.matricula_coincide,
         medio_prueba: body.medio_prueba,
-        numero_serie_aparato: body.numero_serie_aparato,
-        municipio_emisor: body.municipio_emisor,
+        numero_serie_aparato: body.numero_serie_aparato
+          ? sanitize(body.numero_serie_aparato)
+          : null,
+        municipio_emisor: body.municipio_emisor
+          ? sanitize(body.municipio_emisor)
+          : null,
         velocidad_foto: body.velocidad_foto,
 
         // Conductor
-        nombre_completo: body.nombre_completo,
-        dni: body.dni,
-        direccion: body.direccion,
+        nombre_completo: sanitize(body.nombre_completo),
+        dni: sanitize(body.dni),
+        direccion: sanitize(body.direccion),
         email: body.email,
 
         // Consentimientos

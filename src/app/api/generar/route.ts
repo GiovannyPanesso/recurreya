@@ -6,6 +6,7 @@ import { addDays, format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import React from "react";
 import { sendEscritoEmail } from "@/lib/email/sendEmail";
+import { ratelimit } from "@/lib/ratelimit";
 
 const ZBE_MADRID_NORMATIVA = `
 NORMATIVA ZBE MADRID — ACTUALIZADA A MARZO 2026
@@ -207,6 +208,24 @@ async function generateWithAnthropic(
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
+    const { success } = await ratelimit.limit(ip);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Demasiadas peticiones. Espera un momento." },
+        { status: 429 },
+      );
+    }
+    // Validación de origen
+    const origin = req.headers.get("origin");
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "https://recurreya.es",
+      "https://www.recurreya.es",
+    ];
+    if (origin && !allowedOrigins.includes(origin)) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 403 });
+    }
     const { multaId } = await req.json();
 
     if (!multaId) {

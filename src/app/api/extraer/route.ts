@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ratelimit } from "@/lib/ratelimit";
 
 const EXTRACTION_PROMPT = `Eres un asistente especializado en analizar notificaciones de multas de tráfico españolas.
 Analiza la imagen o documento y extrae todos los datos que puedas identificar.
@@ -79,6 +80,25 @@ async function extractWithAnthropic(fileBuffer: Buffer, mimeType: string) {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
+    const { success } = await ratelimit.limit(ip);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Demasiadas peticiones. Espera un momento." },
+        { status: 429 },
+      );
+    }
+    // Validación de origen
+    const origin = req.headers.get("origin");
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "https://recurreya.es",
+      "https://www.recurreya.es",
+    ];
+    if (origin && !allowedOrigins.includes(origin)) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 403 });
+    }
+
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
 

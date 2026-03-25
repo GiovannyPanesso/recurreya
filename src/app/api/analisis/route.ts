@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { ratelimit } from "@/lib/ratelimit";
 
 const ZBE_MADRID_NORMATIVA = `
 NORMATIVA ZBE MADRID — ACTUALIZADA A MARZO 2026
@@ -188,6 +189,14 @@ async function analyzeWithAnthropic(expediente: string): Promise<string> {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
+    const { success } = await ratelimit.limit(ip);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Demasiadas peticiones. Espera un momento." },
+        { status: 429 },
+      );
+    }
     const body = await req.json();
     const { multaId } = body;
 
