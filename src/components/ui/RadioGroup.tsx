@@ -27,7 +27,7 @@ export function RadioGroup({
           className={cn(
             "flex cursor-pointer items-start gap-3 rounded-lg border p-3.5 transition",
             value === option.value
-              ? "border-blue-500 bg-blue-500/10"
+              ? "border-green-500 bg-green-500/10"
               : "border-white/10 bg-white/3 hover:border-white/20",
           )}
         >
@@ -37,7 +37,7 @@ export function RadioGroup({
             value={option.value}
             checked={value === option.value}
             onChange={() => onChange(option.value)}
-            className="mt-0.5 accent-blue-500"
+            className="mt-0.5 accent-green-500"
           />
           <div>
             <span className="text-sm font-medium text-white">

@@ -11,7 +11,7 @@ const STEPS = [
 ];
 
 interface StepIndicatorProps {
-  currentStep: number; // 1-based
+  currentStep: number;
 }
 
 export function StepIndicator({ currentStep }: StepIndicatorProps) {
@@ -25,13 +25,13 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
 
           return (
             <div key={label} className="flex flex-1 items-center">
-              {/* Círculo */}
               <div className="flex flex-col items-center">
                 <div
                   className={cn(
                     "flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold transition-all",
-                    isCompleted && "border-blue-500 bg-blue-500 text-white",
-                    isActive && "border-blue-500 bg-blue-500/10 text-blue-400",
+                    isCompleted && "border-green-500 bg-green-500 text-white",
+                    isActive &&
+                      "border-green-500 bg-green-500/10 text-green-400",
                     !isCompleted &&
                       !isActive &&
                       "border-white/10 text-slate-600",
@@ -42,19 +42,18 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
                 <span
                   className={cn(
                     "mt-1 hidden text-xs sm:block",
-                    isActive ? "text-blue-400" : "text-slate-600",
+                    isActive ? "text-green-400" : "text-slate-600",
                   )}
                 >
                   {label}
                 </span>
               </div>
 
-              {/* Línea conectora */}
               {index < STEPS.length - 1 && (
                 <div
                   className={cn(
                     "mx-1 h-px flex-1 transition-all",
-                    stepNumber < currentStep ? "bg-blue-500" : "bg-white/10",
+                    stepNumber < currentStep ? "bg-green-500" : "bg-white/10",
                   )}
                 />
               )}

@@ -181,7 +181,7 @@ export function MultaForm() {
           <button
             type="button"
             onClick={fillDevData}
-            className="w-full rounded-lg border border-dashed border-amber-500/30 bg-amber-500/5 py-2 text-xs text-amber-400 transition hover:bg-amber-500/10"
+            className="w-full rounded-lg border border-dashed border-green-500/30 bg-green-500/5 py-2 text-xs text-green-400 transition hover:bg-green-500/10"
           >
             ⚡ Rellenar datos de prueba
           </button>
@@ -215,7 +215,7 @@ export function MultaForm() {
                 "flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-semibold transition",
                 continueDisabled
                   ? "cursor-not-allowed bg-white/5 text-slate-600"
-                  : "bg-blue-600 text-white hover:bg-blue-500",
+                  : "bg-green-600 text-white hover:bg-green-500",
               )}
             >
               Continuar
@@ -225,7 +225,7 @@ export function MultaForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-green-500 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>

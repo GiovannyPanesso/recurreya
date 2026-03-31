@@ -3,15 +3,14 @@
 @theme {
   --font-sans: var(--font-geist);
 
-  --color-brand-900: #0a0f1e;
-  --color-brand-800: #0d1530;
-  --color-brand-700: #112047;
-  --color-brand-600: #1a3a6e;
-  --color-brand-500: #2563eb;
-  --color-brand-400: #3b82f6;
-  --color-accent: #ef4444;
-  --color-accent-amber: #f59e0b;
-  --color-success: #22c55e;
+  --color-brand-950: #030d08;
+  --color-brand-900: #051a0f;
+  --color-brand-800: #082a18;
+  --color-brand-700: #0d3d23;
+  --color-brand-600: #166534;
+  --color-accent: #00c853;
+  --color-accent-light: #69f0ae;
+  --color-accent-muted: #00c85320;
 }
 
 * {
@@ -23,7 +22,7 @@ html {
 }
 
 body {
-  background-color: var(--color-brand-900);
+  background-color: #030d08;
   color: #f8fafc;
   font-family: var(--font-sans), sans-serif;
 }

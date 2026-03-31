@@ -28,7 +28,6 @@ export function FormField({
   );
 }
 
-// Input base
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: boolean;
 }
@@ -38,7 +37,7 @@ export function Input({ error, className, ...props }: InputProps) {
     <input
       className={cn(
         "w-full rounded-lg border bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none transition",
-        "focus:border-blue-500 focus:ring-1 focus:ring-blue-500",
+        "focus:border-green-500 focus:ring-1 focus:ring-green-500",
         error ? "border-red-500" : "border-white/10",
         className,
       )}
@@ -47,7 +46,6 @@ export function Input({ error, className, ...props }: InputProps) {
   );
 }
 
-// Select base
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   error?: boolean;
 }
@@ -56,8 +54,8 @@ export function Select({ error, className, children, ...props }: SelectProps) {
   return (
     <select
       className={cn(
-        "w-full rounded-lg border bg-[#0d1530] px-4 py-2.5 text-sm text-white outline-none transition",
-        "focus:border-blue-500 focus:ring-1 focus:ring-blue-500",
+        "w-full rounded-lg border bg-[#051a0f] px-4 py-2.5 text-sm text-white outline-none transition",
+        "focus:border-green-500 focus:ring-1 focus:ring-green-500",
         error ? "border-red-500" : "border-white/10",
         className,
       )}
