@@ -1,4 +1,4 @@
-"use client";
+"use client";-
 
 import { UseFormReturn } from "react-hook-form";
 import { MultaSchemaType as MultaFormData } from "@/lib/validations/multa";
@@ -106,7 +106,7 @@ export function Step1Entrada({ form }: Props) {
                 className={cn(
                   "flex flex-col items-center gap-3 rounded-xl border p-5 text-center transition",
                   modoEntrada === option.value
-                    ? "border-blue-500 bg-blue-500/10 text-blue-400"
+                    ? "border-green-500 bg-green-500/10 text-green-400"
                     : "border-white/10 bg-white/3 text-slate-400 hover:border-white/20",
                 )}
               >
