@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     "Analizamos tu multa de tráfico con IA y generamos un escrito de recurso profesional en minutos. Solo pagas si hay argumentos.",
   keywords:
     "recurrir multa tráfico, recurso multa, alegaciones multa, recurreya",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({

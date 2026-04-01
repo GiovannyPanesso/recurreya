@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ShieldCheck,
   Zap,
@@ -22,7 +23,14 @@ export default function LandingPage() {
         className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 backdrop-blur-xl"
         style={{ backgroundColor: "#030d0890" }}
       >
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-2">
+          <Image
+            src="/logo.svg"
+            alt="RecurreYa"
+            width={32}
+            height={32}
+            className="rounded-lg"
+          />
           <span className="text-xl font-bold tracking-tight">
             Recurre<span style={{ color: "#00c853" }}>Ya</span>
           </span>
