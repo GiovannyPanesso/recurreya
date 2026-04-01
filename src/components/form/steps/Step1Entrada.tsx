@@ -1,5 +1,3 @@
-"use client";-
-
 import { UseFormReturn } from "react-hook-form";
 import { MultaSchemaType as MultaFormData } from "@/lib/validations/multa";
 import { FormField } from "@/components/ui/FormField";
