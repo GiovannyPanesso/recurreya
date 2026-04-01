@@ -125,7 +125,7 @@ export function AnalisisContent() {
   if (status === "loading") {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-24">
-        <Loader2 size={40} className="animate-spin text-blue-500" />
+        <Loader2 size={40} className="animate-spin text-green-500" />
         <p className="text-slate-400">Analizando tu expediente...</p>
         <p className="text-xs text-slate-600">
           Revisando argumentos legales aplicables
@@ -272,7 +272,7 @@ export function AnalisisContent() {
           </button>
           <button
             onClick={handleDescarte}
-            className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
+            className="w-full rounded-xl bg-green-600 py-3 text-sm font-semibold text-white transition hover:bg-green-500"
           >
             Prefiero pagar con descuento
           </button>
