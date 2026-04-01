@@ -90,7 +90,6 @@ export async function POST(req: NextRequest) {
     }
     // Validación de origen
     const origin = req.headers.get("origin");
-    console.log(`🔍 Origin recibido: ${origin}`);
     const allowedOrigins = [
       "http://localhost:3000",
       "https://recurreya.vercel.app",
@@ -135,7 +134,6 @@ export async function POST(req: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    console.log(`📄 EXTRACCIÓN con: Anthropic`);
     const rawText = await extractWithAnthropic(buffer, file.type);
 
     // Limpiar y parsear JSON

@@ -198,10 +198,6 @@ async function generateWithAnthropic(
     ],
   });
 
-  console.log(
-    `📊 Tokens usados - input: ${message.usage.input_tokens}, output: ${message.usage.output_tokens}`,
-  );
-
   const block = message.content[0];
   return block.type === "text" ? block.text : "";
 }
@@ -297,7 +293,6 @@ export async function POST(req: NextRequest) {
         : expediente;
 
     const provider = process.env.AI_PROVIDER ?? "groq";
-    console.log(`📝 GENERACIÓN con: ${provider}`);
     let escritoTexto: string;
 
     if (provider === "anthropic") {
@@ -313,9 +308,6 @@ export async function POST(req: NextRequest) {
         multa,
       );
     }
-    console.log(
-      `📊 Escrito generado - longitud: ${escritoTexto.length} caracteres`,
-    );
 
     const fechaLimite = format(
       addDays(parseISO(multa.fecha_notificacion), 20),
