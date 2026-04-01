@@ -24,7 +24,7 @@ export async function sendEscritoEmail(params: SendEscritoEmailParams) {
   } = params;
 
   const { data, error } = await resend.emails.send({
-    from: "RecurreYa <onboarding@resend.dev>",
+    from: "RecurreYa <noreply@recurreya.es>",
     to,
     subject: `Tu escrito de recurso listo — Exp. ${numeroExpediente}`,
     react: React.createElement(EscritoEmail, {
