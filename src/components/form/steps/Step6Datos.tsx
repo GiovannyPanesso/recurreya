@@ -111,7 +111,7 @@ export function Step6Datos({ form }: Props) {
               className={cn(
                 "flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition",
                 checked
-                  ? "border-blue-500/30 bg-blue-500/5"
+                  ? "border-green-500/30 bg-green-500/5"
                   : "border-white/5 hover:border-white/10",
               )}
             >

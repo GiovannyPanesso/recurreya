@@ -4,7 +4,10 @@ import { Link, Loader2 } from "lucide-react";
 
 export default function AnalisisPage() {
   return (
-    <main className="min-h-screen bg-[#0a0f1e] px-4 py-12">
+    <main
+      className="min-h-screen px-4 py-12"
+      style={{ backgroundColor: "#030d08" }}
+    >
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 text-center">
           <Link
