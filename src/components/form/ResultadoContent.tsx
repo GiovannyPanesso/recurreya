@@ -102,7 +102,7 @@ function InstruccionItem({
 }) {
   return (
     <div className="flex gap-3 rounded-xl border border-white/5 bg-white/3 p-4">
-      <div className="mt-0.5 shrink-0 text-blue-400">{icon}</div>
+      <div className="mt-0.5 shrink-0 text-green-400">{icon}</div>
       <div>
         <p className="font-medium text-white">{titulo}</p>
         <p className="mt-0.5 text-sm text-slate-300">{descripcion}</p>
@@ -175,7 +175,7 @@ export function ResultadoContent() {
   if (status === "loading" || status === "generating") {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-24">
-        <Loader2 size={40} className="animate-spin text-blue-500" />
+        <Loader2 size={40} className="animate-spin text-green-500" />
         <p className="text-slate-300">
           {status === "loading"
             ? "Verificando pago..."
@@ -231,7 +231,7 @@ export function ResultadoContent() {
           href={documentoUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-3 rounded-xl bg-blue-600 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-500"
+          className="flex items-center justify-center gap-3 rounded-xl bg-green-600 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-green-500"
         >
           <Download size={20} />
           Descargar PDF

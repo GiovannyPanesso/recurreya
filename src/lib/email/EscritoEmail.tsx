@@ -75,13 +75,13 @@ export function EscritoEmail({
           {/* Header */}
           <div
             style={{
-              backgroundColor: "#0d1530",
+              backgroundColor: "#030d08",
               padding: "30px",
               textAlign: "center",
             }}
           >
             <h1 style={{ color: "#ffffff", margin: 0, fontSize: "24px" }}>
-              Recurre<span style={{ color: "#3b82f6" }}>Ya</span>
+              Recurre<span style={{ color: "#00c853" }}>Ya</span>
             </h1>
             <p
               style={{ color: "#94a3b8", margin: "8px 0 0", fontSize: "14px" }}
@@ -106,8 +106,8 @@ export function EscritoEmail({
               <a
                 href={documentoUrl}
                 style={{
-                  backgroundColor: "#2563eb",
-                  color: "#ffffff",
+                  backgroundColor: "#00c853",
+                  color: "#030d08",
                   padding: "14px 28px",
                   borderRadius: "8px",
                   textDecoration: "none",
@@ -123,14 +123,14 @@ export function EscritoEmail({
             {/* Plazo */}
             <div
               style={{
-                backgroundColor: "#fef3c7",
-                border: "1px solid #f59e0b",
+                backgroundColor: "#f0fdf4",
+                border: "1px solid #00c853",
                 borderRadius: "8px",
                 padding: "16px",
                 marginBottom: "24px",
               }}
             >
-              <p style={{ margin: 0, color: "#92400e", fontWeight: "bold" }}>
+              <p style={{ margin: 0, color: "#166534", fontWeight: "bold" }}>
                 ⏰ Tienes hasta el {fechaLimite} para presentarlo
               </p>
             </div>
