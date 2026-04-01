@@ -88,7 +88,6 @@ export function AnalisisContent() {
 
     const fetchAnalisis = async () => {
       try {
-        // Llamar al análisis
         const res = await fetch("/api/analisis", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -102,7 +101,6 @@ export function AnalisisContent() {
 
         const analisis = await res.json();
 
-        // Obtener fecha de notificación e importe de la multa
         const multaRes = await fetch(`/api/multas/${multaId}`);
         const multa = await multaRes.json();
 
@@ -121,46 +119,6 @@ export function AnalisisContent() {
 
     fetchAnalisis();
   }, [multaId, router]);
-
-  if (status === "loading") {
-    return (
-      <div className="flex flex-col items-center justify-center gap-4 py-24">
-        <Loader2 size={40} className="animate-spin text-green-500" />
-        <p className="text-slate-400">Analizando tu expediente...</p>
-        <p className="text-xs text-slate-600">
-          Revisando argumentos legales aplicables
-        </p>
-      </div>
-    );
-  }
-
-  if (status === "error") {
-    return (
-      <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-center">
-        <p className="text-red-400">{error}</p>
-        <button
-          onClick={() => router.back()}
-          className="mt-4 text-sm text-slate-400 underline"
-        >
-          Volver atrás
-        </button>
-      </div>
-    );
-  }
-
-  if (!result) return null;
-
-  const config = CONFIG[result.valoracion];
-
-  // Calcular días restantes
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0);
-  const fechaNotif = parseISO(result.fecha_notificacion);
-  const fechaLimite = addDays(fechaNotif, 20);
-  const diasRestantes = differenceInDays(fechaLimite, hoy);
-  const fechaLimiteStr = format(fechaLimite, "d 'de' MMMM 'de' yyyy", {
-    locale: es,
-  });
 
   const handlePagar = async () => {
     try {
@@ -186,9 +144,54 @@ export function AnalisisContent() {
     router.push("/");
   };
 
+  if (status === "loading") {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-24">
+        <div className="relative">
+          <Loader2 size={40} className="animate-spin text-green-500" />
+          <div
+            className="absolute inset-0 rounded-full blur-xl"
+            style={{ backgroundColor: "#00c85320" }}
+          />
+        </div>
+        <p className="font-medium text-white">Analizando tu expediente...</p>
+        <p className="text-xs text-slate-500">
+          Revisando argumentos legales aplicables
+        </p>
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-center">
+        <p className="text-red-400">{error}</p>
+        <button
+          onClick={() => router.back()}
+          className="mt-4 text-sm text-slate-400 underline"
+        >
+          Volver atrás
+        </button>
+      </div>
+    );
+  }
+
+  if (!result) return null;
+
+  const config = CONFIG[result.valoracion];
+
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const fechaNotif = parseISO(result.fecha_notificacion);
+  const fechaLimite = addDays(fechaNotif, 20);
+  const diasRestantes = differenceInDays(fechaLimite, hoy);
+  const fechaLimiteStr = format(fechaLimite, "d 'de' MMMM 'de' yyyy", {
+    locale: es,
+  });
+
   return (
     <div className="space-y-6">
-      {/* Resultado del análisis */}
+      {/* Resultado */}
       <div
         className={`rounded-2xl border p-8 text-center ${config.borderColor} ${config.bgColor}`}
       >
@@ -202,7 +205,6 @@ export function AnalisisContent() {
           {config.descripcion(result.num_argumentos)}
         </p>
 
-        {/* Argumentos bloqueados */}
         {result.valoracion !== "debil" && (
           <div className="mt-6 flex items-center justify-center gap-2 rounded-lg bg-white/5 px-4 py-3 text-sm text-slate-400">
             <Lock size={14} />
@@ -226,9 +228,7 @@ export function AnalisisContent() {
           />
           <div>
             <p
-              className={`font-semibold ${
-                diasRestantes <= 3 ? "text-amber-300" : "text-white"
-              }`}
+              className={`font-semibold ${diasRestantes <= 3 ? "text-amber-300" : "text-white"}`}
             >
               {diasRestantes <= 3
                 ? `⚠️ Solo te quedan ${diasRestantes} días`
@@ -250,7 +250,6 @@ export function AnalisisContent() {
       {/* CTAs */}
       {result.valoracion === "debil" ? (
         <div className="space-y-3">
-          {/* Advertencia de importe */}
           <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-center">
             <p className="text-sm text-amber-300">
               ⚠️ Tu multa:{" "}
@@ -272,7 +271,8 @@ export function AnalisisContent() {
           </button>
           <button
             onClick={handleDescarte}
-            className="w-full rounded-xl bg-green-600 py-3 text-sm font-semibold text-white transition hover:bg-green-500"
+            className="w-full rounded-xl py-3 text-sm font-semibold text-white transition"
+            style={{ backgroundColor: "#00c853", color: "#030d08" }}
           >
             Prefiero pagar con descuento
           </button>
@@ -280,7 +280,12 @@ export function AnalisisContent() {
       ) : (
         <button
           onClick={handlePagar}
-          className="group flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-500"
+          className="group flex w-full items-center justify-center gap-2 rounded-xl py-4 text-base font-semibold text-white transition"
+          style={{
+            backgroundColor: "#00c853",
+            color: "#030d08",
+            boxShadow: "0 0 30px #00c85325",
+          }}
         >
           Obtener mi escrito completo — 4,99€
           <ChevronRight
