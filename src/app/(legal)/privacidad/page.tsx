@@ -18,10 +18,10 @@ export default function PrivacidadPage() {
           El responsable del tratamiento de los datos personales recogidos a
           través de RecurreYa es el titular del servicio, contactable en{" "}
           <a
-            href="mailto:hola@recurreya.es"
+            href="mailto:recurreya.info@gmail.com"
             className="text-blue-400 underline"
           >
-            hola@recurreya.es
+            recurreya.info@gmail.com
           </a>
           .
         </p>
@@ -103,10 +103,10 @@ export default function PrivacidadPage() {
           días. El usuario puede solicitar la eliminación anticipada enviando un
           email a{" "}
           <a
-            href="mailto:hola@recurreya.es"
+            href="mailto:recurreya.info@gmail.com"
             className="text-blue-400 underline"
           >
-            hola@recurreya.es
+            recurreya.info@gmail.com
           </a>
           .
         </p>
@@ -120,10 +120,10 @@ export default function PrivacidadPage() {
           Puedes ejercer tus derechos de acceso, rectificación, supresión,
           portabilidad y oposición enviando un email a{" "}
           <a
-            href="mailto:hola@recurreya.es"
+            href="mailto:recurreya.info@gmail.com"
             className="text-blue-400 underline"
           >
-            hola@recurreya.es
+            recurreya.info@gmail.com
           </a>
           . También puedes presentar una reclamación ante la Agencia Española de
           Protección de Datos (aepd.es).

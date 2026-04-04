@@ -20,10 +20,10 @@ export default function AvisoLegalPage() {
         <p>
           Contacto:{" "}
           <a
-            href="mailto:hola@recurreya.es"
+            href="mailto:recurreya.info@gmail.com"
             className="text-blue-400 underline"
           >
-            hola@recurreya.es
+            recurreya.info@gmail.com
           </a>
         </p>
       </section>
