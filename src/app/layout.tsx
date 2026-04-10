@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react"; // ← 1. Añade este import
 import "./globals.css";
 
 const geist = Geist({
@@ -25,7 +26,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" data-scroll-behavior="smooth">
-      <body className={`${geist.variable} antialiased`}>{children}</body>
+      <body className={`${geist.variable} antialiased`}>
+        {children}
+        <Analytics /> {/* ← 2. Añade esta línea */}
+      </body>
     </html>
   );
 }
